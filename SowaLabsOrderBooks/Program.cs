@@ -55,7 +55,7 @@ namespace SowaLabsOrderBooks
                         var resultForSeller = _hedgerService.GetTheBestPriceForSeller(numOfBtc, orderBooks);
                         foreach (var order in resultForSeller.Orders)
                         {
-                            stringResult.AppendLine($"{type} {order.Amount} where 1 BTC costs {order.Order.Price} in Excange - {order.ExcangeId}");
+                            stringResult.AppendLine($"{type} {order.Amount} where 1 BTC costs {order.Order.Price} in Excange - {order.ExcangeId}. Balance BTC {order.Btc}");
                         }
                         stringResult.AppendLine($"Price is {resultForSeller.TotalPrice}");
                         Console.WriteLine(stringResult.ToString());
@@ -65,7 +65,7 @@ namespace SowaLabsOrderBooks
                         var resultForBuyer = _hedgerService.GetTheBestPriceForBuyer(numOfBtc, orderBooks);
                         foreach (var order in resultForBuyer.Orders)
                         {
-                            stringResult.AppendLine($"{type} {order.Amount} where 1 BTC costs {order.Order.Price} in Excange - {order.ExcangeId}");
+                            stringResult.AppendLine($"{type} {order.Amount} where 1 BTC costs {order.Order.Price} in Excange - {order.ExcangeId}. Balance EUR {order.Eur}");
                         }
                         stringResult.AppendLine($"Price is {resultForBuyer.TotalPrice}");
                         Console.WriteLine(stringResult.ToString());

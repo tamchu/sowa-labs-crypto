@@ -16,5 +16,7 @@ namespace SowaLabsOrderBooks.Models
         public int ExcangeId { get; set; }
         public Order Order { get; set; }
         public decimal Amount { get; set; }
+        public decimal? Eur { get; set; }
+        public decimal? Btc { get; set; }
     }
 }
