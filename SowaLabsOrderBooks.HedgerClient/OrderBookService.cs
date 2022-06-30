@@ -2,6 +2,7 @@
 using SowaLabsOrderBooks.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -9,10 +10,11 @@ namespace SowaLabsOrderBooks.HedgerClient
 {
     public class OrderBookService : IOrderBookService
     {
-        private static readonly string OrderBooksFilePath = @".\Files\order_books_data";
+        private static readonly string OrderBooksFilePath = @"Files/order_books_data";
 
         public List<OrderBook> ListOrderBooks()
         {
+            var path = Path.GetFullPath(OrderBooksFilePath);
             var text = System.IO.File.ReadAllText(OrderBooksFilePath);
             var lines = text.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
 

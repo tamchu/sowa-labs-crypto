@@ -7,7 +7,7 @@ namespace SowaLabsOrderBooks.HedgerClient
 {
     public interface IHedgerService
     {
-        OrdersResponse GetTheBestPriceForSeller(decimal numberOfBtc, List<OrderBook> orderBooks);
-        OrdersResponse GetTheBestPriceForBuyer(decimal numberOfBtc, List<OrderBook> orderBooks);
+        OrdersResult GetTheBestPriceForSeller(decimal numberOfBtc, List<OrderBook> orderBooks);
+        OrdersResult GetTheBestPriceForBuyer(decimal numberOfBtc, List<OrderBook> orderBooks);
     }
 }

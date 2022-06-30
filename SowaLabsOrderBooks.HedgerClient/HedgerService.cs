@@ -8,7 +8,7 @@ namespace SowaLabsOrderBooks.HedgerClient
 {
     public class HedgerService : IHedgerService
     {
-        public OrdersResponse GetTheBestPriceForBuyer(decimal numberOfBtc, List<OrderBook> orderBooks)
+        public OrdersResult GetTheBestPriceForBuyer(decimal numberOfBtc, List<OrderBook> orderBooks)
         {
             var orders = new List<OrderForCalculate>();
             foreach (var orderBook in orderBooks)
@@ -22,7 +22,7 @@ namespace SowaLabsOrderBooks.HedgerClient
             return CalculateForBuyer(orders.OrderBy(o => o.Order.Price).ToList(), numberOfBtc);
         }
 
-        public OrdersResponse GetTheBestPriceForSeller(decimal numberOfBtc, List<OrderBook> orderBooks)
+        public OrdersResult GetTheBestPriceForSeller(decimal numberOfBtc, List<OrderBook> orderBooks)
         {
             var orders = new List<OrderForCalculate>();
             foreach (var orderBook in orderBooks)
@@ -36,11 +36,11 @@ namespace SowaLabsOrderBooks.HedgerClient
             return CalculateForSeller(orders.OrderByDescending(o => o.Order.Price).ToList(), numberOfBtc);
         }        
 
-        private OrdersResponse CalculateForBuyer(List<OrderForCalculate> orders, decimal numberOfBtc)
+        private OrdersResult CalculateForBuyer(List<OrderForCalculate> orders, decimal numberOfBtc)
         {
             var amount = 0.0M;
             var price = 0.0M;
-            var result = new OrdersResponse { Orders = new List<OrderResult>() };
+            var result = new OrdersResult { Orders = new List<OrderResult>() };
 
             foreach (var order in orders)
             {
@@ -50,6 +50,7 @@ namespace SowaLabsOrderBooks.HedgerClient
                     if (order.Order.Amount < reminder)
                     {
                         var currentPrice = order.Order.Price * order.Order.Amount;
+                        // Because is OrderType Buy, we have to check balance in eurs
                         if (currentPrice <= order.Balance.Eur)
                         {
                             price += currentPrice;
@@ -92,11 +93,11 @@ namespace SowaLabsOrderBooks.HedgerClient
             return result;
         }
 
-        private OrdersResponse CalculateForSeller(List<OrderForCalculate> orders, decimal numberOfBtc)
+        private OrdersResult CalculateForSeller(List<OrderForCalculate> orders, decimal numberOfBtc)
         {
             var amount = 0.0M;
             var price = 0.0M;
-            var result = new OrdersResponse { Orders = new List<OrderResult>() };
+            var result = new OrdersResult { Orders = new List<OrderResult>() };
 
             foreach (var order in orders)
             {
@@ -105,6 +106,7 @@ namespace SowaLabsOrderBooks.HedgerClient
                     var reminder = numberOfBtc - amount;
                     if (order.Order.Amount < reminder)
                     {
+                        // Because is OrderType Sell, we have to check for balance in btcs
                         if (order.Order.Amount <= order.Balance.Btc)
                         {
                             price += (order.Order.Price * order.Order.Amount);

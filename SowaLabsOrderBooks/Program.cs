@@ -17,63 +17,44 @@ namespace SowaLabsOrderBooks
 
         private static void SetChoice()
         {
-            Console.WriteLine($"SELLING BTCS - PRESS 1!");
-            Console.WriteLine($"BUYING BTCS - PRESS 2!");
-            var choice = Console.ReadLine();
-
-            if (int.TryParse(choice, out int result))
+            string choice;
+            do
             {
-                if (result != 1 && result != 2)
-                {
-                    Console.WriteLine("WRONG CHOICE! If you want to try again, press 1 for selling, 2 for buying or 3 for exit!");
-                    choice = Console.ReadLine();
-                    if (int.Parse(choice) == 1 || int.Parse(choice) == 2)
-                    {
-                        SetChoice();
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-                else
-                {
-                    var type = result == 1 ? OrderType.Sell : OrderType.Buy;
-                    Console.WriteLine($"How many BTC do you want to {type}?");
-                    var numberOfBtc = Console.ReadLine();
-                    if (!decimal.TryParse(numberOfBtc, out decimal numOfBtc))
-                    {
-                        Console.WriteLine($"Invalid input - {numberOfBtc}");
-                        return;
-                    }                        
+                Console.WriteLine($"SELLING BTCS - PRESS 1!");
+                Console.WriteLine($"BUYING BTCS - PRESS 2!");
+                choice = Console.ReadLine();
 
-                    Console.WriteLine("Calculating. Please wait.");
-                    var orderBooks = _orderBookService.ListOrderBooks();
-                    var stringResult = new StringBuilder();
-                    if (result == 1)
+                if (int.TryParse(choice, out int result) && result == 1 || result == 2)
+                {
+                    string numberOfBtc;
+                    do
                     {
-                        var resultForSeller = _hedgerService.GetTheBestPriceForSeller(numOfBtc, orderBooks);
-                        foreach (var order in resultForSeller.Orders)
-                        {
-                            stringResult.AppendLine($"{type} {order.Amount} where 1 BTC costs {order.Order.Price} in Excange - {order.ExcangeId}. Balance BTC {order.Btc}");
-                        }
-                        stringResult.AppendLine($"Price is {resultForSeller.TotalPrice}");
-                        Console.WriteLine(stringResult.ToString());
-                    }
-                    else
-                    {
-                        var resultForBuyer = _hedgerService.GetTheBestPriceForBuyer(numOfBtc, orderBooks);
-                        foreach (var order in resultForBuyer.Orders)
-                        {
-                            stringResult.AppendLine($"{type} {order.Amount} where 1 BTC costs {order.Order.Price} in Excange - {order.ExcangeId}. Balance EUR {order.Eur}");
-                        }
-                        stringResult.AppendLine($"Price is {resultForBuyer.TotalPrice}");
-                        Console.WriteLine(stringResult.ToString());
-                    }
-                }
+                        var type = result == 1 ? OrderType.Sell : OrderType.Buy;
+                        Console.WriteLine($"How many BTC do you want to {type}?");
+                        numberOfBtc = Console.ReadLine();
 
-                Console.ReadLine();
-            };
+                        if (decimal.TryParse(numberOfBtc, out decimal numOfBtc))
+                        {
+                            Console.WriteLine("Calculating. Please wait.");
+                            var orderBooks = _orderBookService.ListOrderBooks();
+                            var resultWithOrders = result == 1 ? _hedgerService.GetTheBestPriceForSeller(numOfBtc, orderBooks) : _hedgerService.GetTheBestPriceForBuyer(numOfBtc, orderBooks);
+                            var balance = result == 1 ? "BTC" : "EUR";
+
+                            var stringResult = new StringBuilder();
+                            foreach (var order in resultWithOrders.Orders)
+                            {
+                                var balanceResult = result == 1 ? order.Btc : order.Eur;
+                                stringResult.AppendLine($"{type} {order.Amount} where 1 BTC costs {order.Order.Price} in Excange - {order.ExcangeId}. Balance {balance} {balanceResult}");
+                            }
+                            stringResult.AppendLine($"Price is {resultWithOrders.TotalPrice}");
+                            Console.WriteLine(stringResult.ToString());
+                        }
+
+                    } while (!decimal.TryParse(numberOfBtc, out decimal num));
+
+                    Console.ReadLine();
+                };
+            } while (choice != "1" && choice != "2");
         }
     } 
 }
