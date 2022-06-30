@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SowaLabsOrderBooks.Models
 {
-    public class OrdersResponse
+    public class OrdersResult
     {
         public decimal TotalPrice { get; set; }
         public List<OrderResult> Orders { get; set; }        

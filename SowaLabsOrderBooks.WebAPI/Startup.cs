@@ -27,8 +27,9 @@ namespace SowaLabsOrderBooks.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSingleton<IHedgerService, HedgerService>();
-            services.AddSingleton<IOrderBookService, OrderBookService>();
+
+            services.AddScoped<IHedgerService, HedgerService>();
+            services.AddScoped<IOrderBookService, OrderBookService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

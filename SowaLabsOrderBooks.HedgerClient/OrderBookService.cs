@@ -1,15 +1,13 @@
 ﻿using Newtonsoft.Json;
 using SowaLabsOrderBooks.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SowaLabsOrderBooks.HedgerClient
 {
     public class OrderBookService : IOrderBookService
     {
-        private static readonly string OrderBooksFilePath = @".\Files\order_books_data";
+        private static readonly string OrderBooksFilePath = @"Files/order_books_data";
 
         public List<OrderBook> ListOrderBooks()
         {
