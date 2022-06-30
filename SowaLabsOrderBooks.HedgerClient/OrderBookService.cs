@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
 using SowaLabsOrderBooks.Models;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SowaLabsOrderBooks.HedgerClient
 {
@@ -14,7 +11,6 @@ namespace SowaLabsOrderBooks.HedgerClient
 
         public List<OrderBook> ListOrderBooks()
         {
-            var path = Path.GetFullPath(OrderBooksFilePath);
             var text = System.IO.File.ReadAllText(OrderBooksFilePath);
             var lines = text.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
 
