@@ -7,11 +7,12 @@ namespace SowaLabsOrderBooks.HedgerClient
 {
     public class OrderBookService : IOrderBookService
     {
-        private static readonly string OrderBooksFilePath = @"Files/order_books_data";
+        private static readonly string OrderBooksFilePath = @"Files/order_books_data1";
 
-        public List<OrderBook> ListOrderBooks()
+        public List<OrderBook> ListOrderBooks(string path = null)
         {
-            var text = System.IO.File.ReadAllText(OrderBooksFilePath);
+            var orderBooksFilePath = path == null ? OrderBooksFilePath : path;
+            var text = System.IO.File.ReadAllText(orderBooksFilePath);
             var lines = text.Split('\n').Where(l => !string.IsNullOrWhiteSpace(l)).ToList();
 
             var orderBooks = new List<OrderBook>();

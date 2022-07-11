@@ -7,6 +7,6 @@ namespace SowaLabsOrderBooks.HedgerClient
 {
     public interface IOrderBookService
     {
-        List<OrderBook> ListOrderBooks();
+        List<OrderBook> ListOrderBooks(string path = null);
     }
 }
