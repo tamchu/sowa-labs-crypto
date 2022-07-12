@@ -8,6 +8,7 @@ namespace SowaLabsOrderBooks.Models
     public class OrdersResult
     {
         public decimal TotalPrice { get; set; }
+        public decimal TotalAmount { get; set; }
         public List<OrderResult> Orders { get; set; }        
     }
 

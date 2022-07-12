@@ -47,6 +47,11 @@ namespace SowaLabsOrderBooks
                                 stringResult.AppendLine($"{type} {order.Amount} where 1 BTC costs {order.Order.Price} in Excange - {order.ExcangeId}. Balance {balance} {balanceResult}");
                             }
                             stringResult.AppendLine($"Price is {resultWithOrders.TotalPrice}");
+                            if (resultWithOrders.TotalAmount < numOfBtc)
+                            {
+                                stringResult.AppendLine(result == 1 ? $"You can sell only {resultWithOrders.TotalAmount} BTCs, because you don't have enough balance." : $"You can buy only {resultWithOrders.TotalAmount} BTCs, because you don't have enough balance.");
+                            }    
+
                             Console.WriteLine(stringResult.ToString());
                         }
 
