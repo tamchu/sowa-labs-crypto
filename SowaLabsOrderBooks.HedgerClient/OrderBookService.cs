@@ -7,7 +7,7 @@ namespace SowaLabsOrderBooks.HedgerClient
 {
     public class OrderBookService : IOrderBookService
     {
-        private static readonly string OrderBooksFilePath = @"Files/order_books_data1";
+        private static readonly string OrderBooksFilePath = @"Files/order_books_data";
 
         public List<OrderBook> ListOrderBooks(string path = null)
         {
