@@ -24,10 +24,7 @@ namespace SowaLabsOrderBooks.HedgerClient
             var orders = new List<OrderForCalculate>();
             foreach (var orderBook in orderBooks)
             {
-                foreach (var bid in orderBook.Bids)
-                {
-                    orders.Add(new OrderForCalculate { OrderBookNumber = orderBook.OrderBookNumber, Order = bid.Order, Balance = orderBook.Balance });
-                }
+                orders.AddRange(orderBook.Bids.Select(bid => new OrderForCalculate { OrderBookNumber = orderBook.OrderBookNumber, Order = bid.Order, Balance = orderBook.Balance }));
             }
 
             return CalculateForSeller(orders.OrderByDescending(o => o.Order.Price).ToList(), numberOfBtc);
@@ -68,60 +65,29 @@ namespace SowaLabsOrderBooks.HedgerClient
             return result;
         }
 
-        private OrdersResult CalculateForSeller(List<OrderForCalculate> orders, decimal numberOfBtc)
+        private OrdersResult CalculateForSeller(List<OrderForCalculate> orders, decimal amountOfBtcToSell)
         {
-            var amount = 0.0M;
-            var price = 0.0M;
             var result = new OrdersResult { Orders = new List<OrderResult>() };
 
             foreach (var order in orders)
             {
-                if (order.Balance.Btc == 0.0M)
-                    continue;
+                if (order.Balance.Btc == 0.0M) continue;
 
-                if (amount < numberOfBtc)
-                {
-                    var reminder = numberOfBtc - amount;
-                    if (order.Order.Amount <= reminder)
-                    {
-                        // Because is OrderType Sell, we have to check for balance in btcs
-                        if (order.Order.Amount <= order.Balance.Btc)
-                        {
-                            price += (order.Order.Price * order.Order.Amount);
-                            amount += order.Order.Amount;
-                            result.Orders.Add(new OrderResult { ExcangeId = order.OrderBookNumber, Order = order.Order, Amount = order.Order.Amount, Btc = order.Balance.Btc });
-                            order.Balance.Btc -= order.Order.Amount;
-                        }
-                        else
-                        {
-                            price += (order.Order.Price * order.Balance.Btc);
-                            amount += order.Balance.Btc;
-                            result.Orders.Add(new OrderResult { ExcangeId = order.OrderBookNumber, Order = order.Order, Amount = order.Balance.Btc, Btc = order.Balance.Btc });
-                            order.Balance.Btc = 0.0M;
-                        }
-                    }
-                    else
-                    {                        
-                        if (reminder <= order.Balance.Btc)
-                        {
-                            price += reminder * order.Order.Price;
-                            amount += reminder;
-                            result.Orders.Add(new OrderResult { ExcangeId = order.OrderBookNumber, Order = order.Order, Amount = reminder, Btc = order.Balance.Btc });
-                            break;
-                        }
-                        else
-                        {
-                            amount += order.Balance.Btc;
-                            price += order.Balance.Btc * order.Order.Price;                            
-                            result.Orders.Add(new OrderResult { ExcangeId = order.OrderBookNumber, Order = order.Order, Amount = order.Balance.Btc, Btc = order.Balance.Btc });
-                            order.Balance.Btc = 0.0M;
-                        }                        
-                    }
-                }
+                var reminder = amountOfBtcToSell - result.TotalAmount;
+
+                var currentAmount = order.Order.Amount <= reminder ? order.Order.Amount : reminder;
+                var calculatedAmount = currentAmount <= order.Balance.Btc ? currentAmount : order.Balance.Btc;
+
+                result.TotalPrice += order.Order.Price * calculatedAmount;
+                result.TotalAmount += calculatedAmount;
+                result.Orders.Add(new OrderResult { ExcangeId = order.OrderBookNumber, Order = order.Order, Amount = calculatedAmount, Btc = order.Balance.Btc });
+                order.Balance.Btc -= calculatedAmount;
+
+                if (result.TotalAmount == amountOfBtcToSell) break;
+
+                if (result.TotalAmount > amountOfBtcToSell)
+                    throw new Exception("CRITICAL - going over.");
             }
-
-            result.TotalPrice = price;
-            result.TotalAmount = amount;
 
             return result;
         }
