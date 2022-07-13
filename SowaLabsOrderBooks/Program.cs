@@ -50,7 +50,11 @@ namespace SowaLabsOrderBooks
                             if (resultWithOrders.TotalAmount < numOfBtc)
                             {
                                 stringResult.AppendLine(result == 1 ? $"You can sell only {resultWithOrders.TotalAmount} BTCs, because you don't have enough balance." : $"You can buy only {resultWithOrders.TotalAmount} BTCs, because you don't have enough balance.");
-                            }    
+                            }
+                            else
+                            {
+                                stringResult.AppendLine($"Total amount: {resultWithOrders.TotalAmount}");
+                            }
 
                             Console.WriteLine(stringResult.ToString());
                         }
